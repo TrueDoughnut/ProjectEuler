@@ -1,0 +1,6 @@
+[package]
+name = "ProjectEuler"
+version = "0.1.0"
+authors = ["csap0422 <Christopher543sap@gmail.com>"]
+
+[dependencies]
