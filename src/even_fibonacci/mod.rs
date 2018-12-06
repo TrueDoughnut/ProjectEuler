@@ -1,7 +1,17 @@
 pub fn run(){
-    let i = 1;
+    let mut i = 1;
+    let mut x = fib(i);
+    let mut sum = 0;
+    while x < 4000000 {
 
+        if x % 2 == 0 {
+            sum += x;
+        }
 
+        i += 1;
+        x = fib(i);
+    }
+    println!("{}", sum);
 }
 
 fn fib(x: i64) -> i64 {
