@@ -3,6 +3,7 @@
 #![allow(unused_variables)]
 
 use std::f64;
+use std::collections::HashMap;
 
 mod even_fibonacci;
 mod palindrome_product;
@@ -18,10 +19,12 @@ fn main() {
     //problem_8();
     //problem_9();
     //problem_10();
+    //problem_12_fast();
+    problem_14();
 }
 
 
-///multiples of 3 or 5 below 1000
+/// multiples of 3 or 5 below 1000
 fn problem_1(){
     let mut sum: i64 = 0;
 
@@ -97,7 +100,7 @@ fn problem_6(n: i64) {
 
 /// nth prime
 fn problem_7(n: i32) {
-    let vec = first_primes(n as i64);
+    let vec = first_n_primes(n as i64);
     let last = match vec.last() {
         Some(num) => num,
         None => &-1,
@@ -129,7 +132,7 @@ fn problem_8() {
     println!("{}", max);
 }
 
-///special pythagorean triplet
+/// special pythagorean triplet
 fn problem_9() {
     let mut a = 1;
     let mut b = 1;
@@ -154,9 +157,9 @@ fn problem_9() {
     println!("{}", a * b * c);
 }
 
-///summation of primes
+/// summation of primes
 fn problem_10() {
-    let vec = first_primes(250000);
+    let vec = first_n_primes(250000);
     let mut i = 0;
     let mut sum = 0;
     while vec[i] <= 2000000 {
@@ -166,10 +169,130 @@ fn problem_10() {
     println!("{}", sum);
 }
 
+/// highly divisible triangle number
+fn problem_12() {
+    let mut i: i64 = 1;
+    let mut n: i64 = 0;
+
+    loop {
+        n += i;
+
+        if num_divisors(n) > 500 {
+            break;
+        }
+
+        i += 1;
+    }
+
+    println!("{}", n);
+}
+
+/// highly divisible triangle number
+/// with prime factorization and combinations
+fn problem_12_fast() {
+    let mut x: i64 = 0;
+
+    loop {
+        let prime_factors = prime_factorization(x);
+
+        let mut factors: i64 = 1;
+
+        for (key, entry) in prime_factors {
+            factors *= combinations(entry);
+        }
+
+        if factors > 500 {
+            break;
+        }
+
+        x += 1;
+    }
+
+    println!("{}", x);
+}
+
+
+/// longest Collatz sequence
+fn problem_14() {
+    let mut n: i64 = 0;
+
+    let max_n: i64 = 0;
+    let max_length: i64 = 0;
+    while n <= 1000000 {
+        if collatz_length(&mut n) > max_length {
+            let max_n = n;
+        }
+        n += 1;
+    }
+
+    println!("{}", max_n);
+}
+
+fn collatz_length(n: &mut i64) -> i64 {
+    let mut count: i64 = 1;
+
+    while *n != 1 {
+        if *n % 2 == 0 {
+            *n /= 2;
+            count += 1;
+        } else {
+            *n *= 3;
+            *n += 1;
+            count += 1;
+        }
+    }
+
+    return count;
+}
+
+fn combinations(n: i64) -> i64 {
+    let mut sum: i64 = 0;
+
+    for i in 1..n {
+        sum += (factorial(n)) / (factorial(i) * factorial(n - i));
+        sum += 1;
+    }
+
+    return sum;
+}
+
+fn factorial(n: i64) -> i64 {
+    if n == 1 || n == 2 {
+        return n;
+    } else {
+        return n * factorial(n-1);
+    }
+}
+
+fn prime_factorization(n: i64) -> HashMap<i64, i64> {
+    let mut map: HashMap<i64, i64> = HashMap::new();
+
+    loop {
+        let x = smallest_prime_factor(n);
+        if x == -1 {
+            break;
+        }
+        let num = map.entry(x).or_insert(0);
+        *num += 1;
+    }
+    return map;
+}
+
+fn smallest_prime_factor(x: i64) -> i64 {
+    let max_factor = x / 2 + 1;
+    let factors = first_primes_until(max_factor);
+    for factor in factors {
+        if x % factor == 0 {
+            return factor;
+        }
+    }
+    return -1;
+}
+
 fn largest_prime_factor(x: i64) {
     let upper = (x as f64).sqrt() as i64 + 1;
 
-    let vec = first_primes(1000);
+    let vec = first_n_primes(1000);
 
     let mut max: i64 = 0;
     for i in 2..upper {
@@ -181,7 +304,7 @@ fn largest_prime_factor(x: i64) {
     println!("{}", max);
 }
 
-fn first_primes(n: i64) -> Vec<i64> {
+fn first_n_primes(n: i64) -> Vec<i64> {
     let mut vec: Vec<i64> = vec!((2));
 
     let mut i: i64 = 3;
@@ -189,8 +312,22 @@ fn first_primes(n: i64) -> Vec<i64> {
         if is_prime(i) {
             vec.push(i);
         }
-        i += 1;
+        i += 2;
     }
+    return vec;
+}
+
+fn first_primes_until(n: i64) -> Vec<i64> {
+    let mut vec: Vec<i64> = vec!((2));
+
+    let mut i: i64 = 3;
+    while i < n {
+        if is_prime(i) {
+            vec.push(i);
+        }
+        i += 2;
+    }
+
     return vec;
 }
 
@@ -212,5 +349,5 @@ fn num_divisors(n: i64) -> i64 {
         }
     }
 
-    return count;
+    return 2 * count;
 }
