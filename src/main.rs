@@ -2,8 +2,14 @@
 #![allow(non_snake_case)]
 #![allow(unused_variables)]
 
+extern crate num_bigint;
+extern crate num_traits;
+
 use std::f64;
 use std::collections::HashMap;
+use num_bigint::{BigInt};
+use num_traits::pow::pow;
+use num_traits::Zero;
 
 mod even_fibonacci;
 mod palindrome_product;
@@ -20,7 +26,7 @@ fn main() {
     //problem_9();
     //problem_10();
     //problem_12_fast();
-    problem_14();
+    //problem_14();
 }
 
 
@@ -211,38 +217,48 @@ fn problem_12_fast() {
     println!("{}", x);
 }
 
-
 /// longest Collatz sequence
 fn problem_14() {
-    let mut n: i64 = 0;
+    let mut n: i64;
+    let mut max_n: i64 = 0;
+    let mut max_length: i64 = 0;
+    let mut size: i64;
 
-    let max_n: i64 = 0;
-    let max_length: i64 = 0;
-    while n <= 1000000 {
-        if collatz_length(&mut n) > max_length {
-            let max_n = n;
+    for i in 2..1000000 {
+        size = 0;
+        n = i;
+
+        while n != 1 {
+            if n % 2 == 0 {
+                n /= 2;
+            } else {
+                n = 3 * n + 1;
+            }
+            size += 1;
         }
-        n += 1;
+
+        if size > max_length {
+            println!("{}: {}", max_n, max_length);
+            max_length = size.clone();
+            max_n = i.clone();
+        }
     }
 
     println!("{}", max_n);
 }
 
-fn collatz_length(n: &mut i64) -> i64 {
-    let mut count: i64 = 1;
+/// power digit sum
+/// sum of digits of 2^1000
+fn problem_15() {
+    let mut num: BigInt = BigInt::from(2);
+    let mut x = pow(num, 1000);
 
-    while *n != 1 {
-        if *n % 2 == 0 {
-            *n /= 2;
-            count += 1;
-        } else {
-            *n *= 3;
-            *n += 1;
-            count += 1;
-        }
+    let mut sum: i64 = 0;
+    while x > Zero::zero() {
+        sum += &x % 10;
+        x /= 10;
     }
-
-    return count;
+    println!("{}", sum);
 }
 
 fn combinations(n: i64) -> i64 {
