@@ -13,6 +13,7 @@ use num_traits::Zero;
 
 mod even_fibonacci;
 mod palindrome_product;
+mod harder_problems;
 
 fn main() {
     //problem_1();
@@ -27,8 +28,9 @@ fn main() {
     //problem_10();
     //problem_12_fast();
     //problem_14();
+    //problem_15();
+    problem_16();
 }
-
 
 /// multiples of 3 or 5 below 1000
 fn problem_1(){
@@ -250,14 +252,27 @@ fn problem_14() {
 /// power digit sum
 /// sum of digits of 2^1000
 fn problem_15() {
-    let mut num: BigInt = BigInt::from(2);
+    let num: BigInt = BigInt::from(2);
     let mut x = pow(num, 1000);
 
-    let mut sum: i64 = 0;
+    let mut sum: BigInt = Zero::zero();
     while x > Zero::zero() {
+        sum += BigInt::from(&x % 10);
+        x /= 10;
+    }
+    println!("{}", sum);
+}
+
+fn problem_16() {
+    let mut x = factorial(100);
+
+    let mut sum = 0;
+
+    while x > 0 {
         sum += &x % 10;
         x /= 10;
     }
+
     println!("{}", sum);
 }
 
